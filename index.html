@@ -1,64 +1,208 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Launching Soon</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    #app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: #000;
+    }
 
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MTCIT Sample Page</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-  </head>
-  <body>
-    <nav>
-      <div class="menu">
-        <div class="logo">
-          <a href="#">MTCIT Test Page</a>
-        </div>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Services</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Feedback</a></li>
-        </ul>
-      </div>
-    </nav>
-    <div class="img"></div>
-    <div class="center">
-      <div class="title">Ensuring the Sustainable Development
-</div>
-        <div class="sub_title">Of</div>
-      <div class="sub_title">Sultanate of Oman</div>
-      <div class="btns">
-        <button>Learn More</button>
-        <button>Follow us</button>
+    #startBg {
+      position: absolute;
+      inset: 0;
+      background: url("./start-bg.png") center/cover no-repeat;
+      filter: brightness(0.5);
+      z-index: 0;
+    }
+
+    #countdownVideo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+      display: none;
+      z-index: 1;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #startBtn {
+      position: relative;
+      z-index: 10;
+      padding: 16px 28px;
+      border: 0;
+      border-radius: 999px;
+      font-size: 30px;
+      background: #F3F8FB;
+      color: #467599;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    #startBtn:active { transform: translateY(1px); }
+
+    #cta {
+      position: relative;
+      z-index: 10;
+      display: none;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #cta .cta-bg {
+      position: absolute;
+      inset: 0;
+      background: url("./bg.png") center/cover no-repeat;
+      filter: brightness(0.4);
+      z-index: 0;
+    }
+
+    #cta .cta-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 24px;
+      color: #fff;
+    }
+
+    #cta h1 {
+      margin: 0 0 16px;
+      font-size: clamp(28px, 5vw, 44px);
+      line-height: 1.15;
+      letter-spacing: 0.5px;
+    }
+
+    #cta p {
+      margin: 0 0 18px;
+      font-size: 25px;
+      opacity: 0.9;
+    }
+
+    #enterBtn {
+      display: inline-block;
+      padding: 14px 22px;
+      border-radius: 999px;
+      background: #F3F8FB;
+      color: #467599;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 30px;
+    }
+    #enterBtn:active { transform: translateY(1px); }
+
+    #loadingHint {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      opacity: 0.7;
+      z-index: 5;
+      text-align: center;
+      padding: 4px 8px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="startBg"></div>
+
+    <video id="countdownVideo" playsinline preload="auto"></video>
+    <div id="overlay" aria-hidden="true"></div>
+
+    <button id="startBtn" type="button">العد التنازلي</button>
+
+    <div id="cta" role="dialog" aria-live="polite">
+      <div class="cta-bg"></div>
+      <div class="cta-content">
+        <h1>! البث المباشر بدأ</h1>
+        <p>.شكرًا لانتظاركم. اضغط أدناه للدخول إلى الموقع</p>
+        <a id="enterBtn" href="#" rel="noopener">دخول الموقع</a>
       </div>
     </div>
-<script>
- window.difyChatbotConfig = {
-  token: '6aY4uc2XdoMM0rLb',
-  baseUrl: 'https://chatbot.mtcit.gov.om'
- }
-</script>
-<script
- src="https://chatbot.mtcit.gov.om/embed.min.js"
- id="6aY4uc2XdoMM0rLb"
- defer>
-</script>
-<style>
-  #dify-chatbot-bubble-button {
-    background-color: #1C64F2 !important;
-  }
-  #dify-chatbot-bubble-window {
-    width: 24rem !important;
-    height: 40rem !important;
-  }
-</style>
-  </body>
+
+    <div id="loadingHint">Ready to launch…</div>
+  </div>
+
+  <script>
+    const VIDEO_URL = './countdown.mp4';
+    const REDIRECT_URL = 'https://test.mtcit.gov.om/ar';
+    const AUTO_REDIRECT = false;
+    const AUTO_REDIRECT_DELAY_MS = 2500;
+    const KNOWN_VIDEO_DURATION_SEC = null;
+
+    const video = document.getElementById('countdownVideo');
+    const startBtn = document.getElementById('startBtn');
+    const startBg = document.getElementById('startBg');
+    const cta = document.getElementById('cta');
+    const enterBtn = document.getElementById('enterBtn');
+    const loadingHint = document.getElementById('loadingHint');
+
+    enterBtn.href = REDIRECT_URL;
+    video.src = VIDEO_URL;
+
+    function revealCTA() {
+      if (cta.style.display === 'block') return;
+      cta.style.display = 'block';
+      video.style.display = 'none';
+      loadingHint.style.display = 'none';
+      if (AUTO_REDIRECT) {
+        setTimeout(() => {
+          window.location.href = REDIRECT_URL;
+        }, AUTO_REDIRECT_DELAY_MS);
+      }
+    }
+
+    video.addEventListener('ended', revealCTA);
+
+    function setDurationFallback() {
+      const duration = Number.isFinite(video.duration) ? video.duration : KNOWN_VIDEO_DURATION_SEC;
+      if (duration && duration > 0) {
+        setTimeout(revealCTA, Math.ceil(duration * 1000) + 500);
+      } else if (KNOWN_VIDEO_DURATION_SEC) {
+        setTimeout(revealCTA, Math.ceil(KNOWN_VIDEO_DURATION_SEC * 1000) + 500);
+      }
+    }
+
+    // Start button click
+    startBtn.addEventListener('click', () => {
+      startBtn.style.display = 'none';
+      startBg.style.display = 'none'; // hide the start background
+      video.style.display = 'block';
+      video.play().then(() => {
+        loadingHint.textContent = '';
+      });
+      setDurationFallback();
+    });
+
+    video.addEventListener('loadedmetadata', setDurationFallback);
+  </script>
+</body>
 </html>
-
-
-
-
-
-
