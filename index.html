@@ -156,7 +156,6 @@
     const REDIRECT_URL = 'https://test.mtcit.gov.om/ar';
     const AUTO_REDIRECT = false;
     const AUTO_REDIRECT_DELAY_MS = 2500;
-    const KNOWN_VIDEO_DURATION_SEC = null;
 
     const video = document.getElementById('countdownVideo');
     const startBtn = document.getElementById('startBtn');
@@ -182,15 +181,6 @@
 
     video.addEventListener('ended', revealCTA);
 
-    function setDurationFallback() {
-      const duration = Number.isFinite(video.duration) ? video.duration : KNOWN_VIDEO_DURATION_SEC;
-      if (duration && duration > 0) {
-        setTimeout(revealCTA, Math.ceil(duration * 1000) + 500);
-      } else if (KNOWN_VIDEO_DURATION_SEC) {
-        setTimeout(revealCTA, Math.ceil(KNOWN_VIDEO_DURATION_SEC * 1000) + 500);
-      }
-    }
-
     startBtn.addEventListener('click', () => {
       startBtn.style.display = 'none';
       startBg.style.display = 'none'; 
@@ -198,14 +188,7 @@
       video.play().then(() => {
         loadingHint.textContent = '';
       });
-      setDurationFallback();
     });
-
-    video.addEventListener('loadedmetadata', setDurationFallback);
   </script>
 </body>
 </html>
-
-
-
-
