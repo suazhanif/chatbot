@@ -191,10 +191,9 @@
       }
     }
 
-    // Start button click
     startBtn.addEventListener('click', () => {
       startBtn.style.display = 'none';
-      startBg.style.display = 'none'; // hide the start background
+      startBg.style.display = 'none'; 
       video.style.display = 'block';
       video.play().then(() => {
         loadingHint.textContent = '';
@@ -206,3 +205,4 @@
   </script>
 </body>
 </html>
+
